@@ -6,6 +6,7 @@ payments) finalise their models. When they do, edit this file and nothing else.
 """
 from decimal import Decimal
 
+from django.apps import apps
 from django.conf import settings
 
 # --- Dev 3: orders. Names below are taken from docs/schema.sql ---------------
@@ -13,6 +14,7 @@ ORDER_STATUSES = ("PENDING", "CONFIRMED", "PREPARING", "READY_FOR_PICKUP",
                   "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED")
 PAYMENT_STATUSES = ("PENDING", "SUCCESS", "FAILED", "REFUNDED")  # note SUCCESS, not PAID
 ORDER_DELIVERED_STATUS = "DELIVERED"
+ORDER_CANCELLED_STATUS = "CANCELLED"
 ORDER_OWNER_FIELD = "customer_id"      # attribute holding the ordering user's pk
 ORDER_STATUS_FIELD = "status"
 ORDER_SUBTOTAL_FIELD = "subtotal"
@@ -42,3 +44,56 @@ def order_delivery_fee(order):
 # --- Team decision pending: Ghana/GHS vs the schema's Nigeria/NGN -----------
 def currency_code():
     return getattr(settings, "CURRENCY_CODE", "GHS")
+
+
+# =============================================================================
+# Reporting (apps.dashboard). Models are looked up lazily by (app label, name).
+# Field names are Django field names; the schema columns are in the comments.
+# =============================================================================
+ORDER_MODEL = ("orders", "Order")
+ORDER_ITEM_MODEL = ("orders", "OrderItem")
+DELIVERY_MODEL = ("delivery", "Delivery")
+
+
+def order_model():
+    return apps.get_model(*ORDER_MODEL)
+
+
+def order_item_model():
+    return apps.get_model(*ORDER_ITEM_MODEL)
+
+
+def delivery_model():
+    return apps.get_model(*DELIVERY_MODEL)
+
+
+# orders_order
+ORDER_PLACED_AT = "placed_at"
+ORDER_TOTAL = "total"
+ORDER_DISCOUNT = "discount_total"
+ORDER_PAYMENT_METHOD = "payment_method"
+# orders_orderitem
+ITEM_ORDER = "order"                   # order_id
+ITEM_FOOD = "fooditem"                 # fooditem_id (nullable: item may be deleted later)
+ITEM_NAME = "name_snapshot"
+ITEM_QUANTITY = "quantity"
+ITEM_LINE_TOTAL = "line_total"
+# delivery_delivery
+DELIVERY_ORDER = "order"               # order_id
+DELIVERY_STATUS = "status"
+DELIVERY_ASSIGNED_AT = "assigned_at"
+DELIVERY_PICKED_UP_AT = "picked_up_at"
+DELIVERY_DELIVERED_AT = "delivered_at"
+DELIVERY_FAILED_STATUS = "FAILED"
+DELIVERY_CANCELLED_STATUS = "CANCELLED"
+# Confirmed by Dev 4 on 16 Nov 2026 (schema.sql lists fewer):
+DELIVERY_STATUSES = ("ASSIGNED", "ACCEPTED", "PICKED_UP", "IN_TRANSIT", "DELIVERED", "FAILED", "CANCELLED")
+DELIVERY_DELIVERED_STATUS = "DELIVERED"
+
+
+# --- Dev 1: who may open the dashboard (roles: CUSTOMER, STAFF, RIDER, ADMIN) --
+def is_dashboard_user(user):
+    """Placeholder: Django staff flag, or a `role` of STAFF/ADMIN once Dev 1 adds it."""
+    if user is None or not getattr(user, "is_authenticated", False):
+        return False
+    return bool(getattr(user, "is_staff", False) or getattr(user, "role", None) in ("STAFF", "ADMIN"))
