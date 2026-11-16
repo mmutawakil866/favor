@@ -1,4 +1,4 @@
-# Dev 5 assumptions (promotions, reviews, reports, QA)
+﻿# Dev 5 assumptions (promotions, reviews, reports, QA)
 
 Status: PROPOSAL. Dev 5 is building on this unless someone objects. Reply on the PR.
 
@@ -6,7 +6,7 @@ Status: PROPOSAL. Dev 5 is building on this unless someone objects. Reply on the
 - Roles: CUSTOMER, STAFF, RIDER, ADMIN
 - Order status: PENDING, CONFIRMED, PREPARING, READY_FOR_PICKUP, OUT_FOR_DELIVERY, DELIVERED, CANCELLED
 - Payment status: PENDING, SUCCESS, FAILED, REFUNDED
-- Delivery status: ASSIGNED, IN_TRANSIT, DELIVERED, FAILED, CANCELLED
+- Delivery status (confirmed by Dev 4, 16 Nov): ASSIGNED, ACCEPTED, PICKED_UP, IN_TRANSIT, DELIVERED, FAILED, CANCELLED
 - Discount type: PERCENTAGE, FIXED
 - Review rating: VERY_BAD, BAD, OKAY, GOOD, EXCELLENT (one review per order)
 - Revenue = sum of orders_order.total where status = DELIVERED (as in vw_daily_sales)
@@ -33,6 +33,13 @@ Status: PROPOSAL. Dev 5 is building on this unless someone objects. Reply on the
 ## Questions
 - Dev 1: role mechanism (User.role field vs Django groups), when the User model merges, menu_fooditem fields.
 - Dev 3: valid status transitions, services for listing/updating/cancelling/refunding orders.
-- Dev 4: delivery event names/payloads, how to register Celery tasks (promotion scheduling, report exports).
+- Dev 4: exact field names for the acceptance and delivery-start times, the WebSocket URL and staff group name, the signatures of assign_rider() and update_delivery_status(), and how to register Celery tasks.
 - Dev 2: who builds the review form and the promo banner display.
 - Lead: API_DOCUMENTATION.md location, PR reviewer for Dev 5, coverage target, first integration demo date.
+
+## Confirmed by Dev 4 (16 Nov 2026)
+- WebSocket events: delivery.assigned, delivery.status_updated, delivery.location_updated, delivery.delivered, order.status_updated.
+- Payload: delivery ID, order ID, rider ID, status, location (where applicable), timestamp.
+- Delivery app services: get_available_riders(), assign_rider(), set_rider_availability(), update_delivery_status().
+- Staff dashboard can receive live updates through Channels and Redis without refreshing.
+- Recorded times: assignment, acceptance, pickup, delivery start, completion; failed and cancelled deliveries are kept.
