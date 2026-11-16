@@ -166,7 +166,7 @@ def delivery_performance(flt):
     if flt.statuses:
         qs = qs.filter(**{f"{ad.DELIVERY_ORDER}__{ad.ORDER_STATUS_FIELD}__in": flt.statuses})
     rows = list(qs.values_list(ad.DELIVERY_STATUS, ad.DELIVERY_ASSIGNED_AT,
-                               ad.DELIVERY_PICKED_UP_AT, ad.DELIVERY_DELIVERED_AT))
+                               ad.DELIVERY_PICKED_UP_AT, ad.DELIVERY_DELIVERED_AT, ad.DELIVERY_ACCEPTED_AT))
     done = [r for r in rows if r[0] == ad.DELIVERY_DELIVERED_STATUS and r[3]]
     return {
         "deliveries_count": len(rows),
@@ -175,6 +175,7 @@ def delivery_performance(flt):
         "cancelled_count": sum(1 for r in rows if r[0] == ad.DELIVERY_CANCELLED_STATUS),
         "avg_assign_to_delivered_min": _avg([_minutes(r[1], r[3]) for r in done if r[1]]),
         "avg_pickup_to_delivered_min": _avg([_minutes(r[2], r[3]) for r in done if r[2]]),
+        "avg_assign_to_accepted_min": _avg([_minutes(r[1], r[4]) for r in rows if r[1] and r[4]]),
     }
 
 

@@ -222,3 +222,11 @@ def test_delivery_performance_counts_cancelled_and_new_statuses(make_order):
     assert d["deliveries_count"] == 3 and d["cancelled_count"] == 1
     assert d["delivered_count"] == 0 and d["failed_count"] == 0
     assert set(reports.ad.DELIVERY_STATUSES) >= {"ACCEPTED", "PICKED_UP"}
+
+def test_delivery_performance_avg_time_to_accept(make_order):
+    from tests.stubs.delivery.models import Delivery
+    t = at(10, 12)
+    Delivery.objects.create(order=make_order(), status="ACCEPTED", assigned_at=t, accepted_at=t + timedelta(minutes=2))
+    Delivery.objects.create(order=make_order(), status="PICKED_UP", assigned_at=t, accepted_at=t + timedelta(minutes=4))
+    Delivery.objects.create(order=make_order(), status="ASSIGNED", assigned_at=t)   # not accepted yet: ignored
+    assert reports.delivery_performance(ALL)["avg_assign_to_accepted_min"] == 3.0

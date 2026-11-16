@@ -82,6 +82,7 @@ ITEM_LINE_TOTAL = "line_total"
 DELIVERY_ORDER = "order"               # order_id
 DELIVERY_STATUS = "status"
 DELIVERY_ASSIGNED_AT = "assigned_at"
+DELIVERY_ACCEPTED_AT = "accepted_at"      # added by Dev 4; picked_up_at is the delivery-start time
 DELIVERY_PICKED_UP_AT = "picked_up_at"
 DELIVERY_DELIVERED_AT = "delivered_at"
 DELIVERY_FAILED_STATUS = "FAILED"
