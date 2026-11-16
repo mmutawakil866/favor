@@ -1,0 +1,39 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'dashboard/reports.css' %}">
+</head>
+<body>
+<header class="bar">
+  <h1>Reports</h1>
+  <nav class="meta"><a href="{% url 'dashboard:orders-board' %}">Live orders</a></nav>
+</header>
+<main id="reports" data-feed="{% url 'dashboard:report-summary' %}">
+  <form class="filters" id="filters" aria-label="Report filters">
+    <label>From <input type="date" id="from"></label>
+    <label>To <input type="date" id="to"></label>
+    <div class="presets" id="presets"></div>
+    <div class="chips" id="chips" role="group" aria-label="Order status"></div>
+    <button type="button" class="ghost" id="csv"></button>
+  </form>
+  <p id="note" class="note" role="status"></p>
+  <section id="kpis" class="kpis"></section>
+  <section class="grid">
+    <article class="panel wide"><h2>Daily revenue</h2><div id="daily"></div></article>
+    <article class="panel"><h2>Orders by status</h2><div id="by-status"></div></article>
+    <article class="panel"><h2>Revenue by payment method</h2><div id="by-pay"></div></article>
+    <article class="panel"><h2>Popular food</h2><div id="popular"></div></article>
+    <article class="panel"><h2>Delivery</h2><div id="delivery"></div></article>
+    <article class="panel"><h2>Customer reviews</h2><div id="reviews"></div></article>
+  </section>
+</main>
+{{ statuses|json_script:"statuses" }}
+<script src="{% static 'dashboard/reports.js' %}" defer></script>
+</body>
+</html>

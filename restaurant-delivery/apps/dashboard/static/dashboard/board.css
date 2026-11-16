@@ -41,3 +41,4 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 "Bricolag
 .toast.err{background:var(--chili)}
 @media (max-width:640px){.board{grid-auto-columns:86%}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.meta a{color:#f6b91f;font-weight:600;text-decoration:none}
