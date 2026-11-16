@@ -1,0 +1,43 @@
+:root{
+  --forest:#0e2f23;--bg:#f3f6f1;--surface:#fff;--ink:#10281f;--muted:#4c6156;--line:#d3ddd5;--chili:#b91f16;--ok:#1b6a4a;--warn:#a15c00;
+  --grad:linear-gradient(120deg,#f6b91f,#e8531a 55%,#c1241a);
+  --d1:150ms;--d2:250ms;--d3:400ms;--ease:cubic-bezier(.22,1,.36,1);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1812;--surface:#112219;--ink:#eaf2ec;--muted:#9db3a6;--line:#233a2d;--ok:#5fd39b;--warn:#f0b24a;color-scheme:dark}}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 "Bricolage Grotesque",system-ui,sans-serif}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 18px;background:var(--forest);color:#f4efe2}
+.bar h1{margin:0;font-size:22px;letter-spacing:-.01em}
+.meta{display:flex;gap:14px;align-items:center;font-size:14px;color:#cfe2d6}
+.conn::before{content:"";display:inline-block;width:9px;height:9px;margin-right:7px;border-radius:50%;background:#9db3a6}
+.conn.live::before{background:#5fd39b;box-shadow:0 0 0 4px rgba(95,211,155,.25)}
+.conn.off::before{background:#ff6b5e}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(272px,1fr);gap:14px;padding:16px;overflow-x:auto;scroll-snap-type:x proximity;align-items:start}
+.col{scroll-snap-align:start;min-height:120px}
+.col h2{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;font-size:15px;font-weight:700;letter-spacing:.01em}
+.col h2 .n{min-width:26px;padding:1px 8px;border-radius:13px;background:var(--forest);color:#f4efe2;text-align:center;font-size:13px}
+.col.has-new h2 .n{background:var(--grad);color:#10281f}
+.list{display:grid;gap:10px}
+.empty{padding:18px 12px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:14px;text-align:center}
+.card{padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;background:var(--surface);transition:border-color var(--d2),box-shadow var(--d2)}
+.card.warn{border-left-color:var(--warn)}
+.card.late{border-left-color:var(--chili);box-shadow:0 0 0 1px var(--chili) inset}
+.card.enter{animation:enter var(--d3) var(--ease)}
+@keyframes enter{from{opacity:0;transform:translateY(-10px) scale(.98)}to{opacity:1;transform:none}}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ref{font:600 13px ui-monospace,Consolas,monospace;color:var(--muted)}
+.age{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--ok)}
+.card.warn .age{color:var(--warn)}.card.late .age{color:var(--chili)}
+.age svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.who{margin:4px 0 6px;font-weight:700}
+.items{margin:0 0 8px;padding:0;list-style:none;font-size:14px;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px}
+.pill{padding:1px 9px;border:1px solid var(--line);border-radius:11px;font-size:12px;font-weight:600}
+.btn{display:block;width:100%;min-height:44px;margin-top:10px;border:0;border-radius:10px;background:var(--chili);color:#fff;font:700 15px/1 "Bricolage Grotesque",system-ui,sans-serif;cursor:pointer;transition:transform var(--d1) var(--ease),opacity var(--d1)}
+.btn:active{transform:scale(.98)}.btn:disabled{opacity:.55;cursor:progress}
+:focus-visible{outline:3px solid #f6b91f;outline-offset:2px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:9;max-width:90vw;padding:12px 18px;border-radius:12px;background:var(--forest);color:#f4efe2;transform:translateX(-50%);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast.err{background:var(--chili)}
+@media (max-width:640px){.board{grid-auto-columns:86%}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}

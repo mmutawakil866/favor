@@ -12,6 +12,7 @@ class Order(models.Model):
     total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     placed_at = models.DateTimeField(default=timezone.now)
     delivered_at = models.DateTimeField(null=True, blank=True)
+    delivery_city = models.CharField(max_length=100, blank=True, default="")
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     fooditem = models.ForeignKey("menu.FoodItem", null=True, on_delete=models.SET_NULL)
@@ -19,3 +20,7 @@ class OrderItem(models.Model):
     unit_price = models.DecimalField(max_digits=12, decimal_places=2)
     quantity = models.PositiveIntegerField()
     line_total = models.DecimalField(max_digits=12, decimal_places=2)
+class OrderStatusHistory(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="history")
+    status = models.CharField(max_length=20)
+    created_at = models.DateTimeField(default=timezone.now)

@@ -98,3 +98,66 @@ def is_dashboard_user(user):
     if user is None or not getattr(user, "is_authenticated", False):
         return False
     return bool(getattr(user, "is_staff", False) or getattr(user, "role", None) in ("STAFF", "ADMIN"))
+
+# =============================================================================
+# Live order board (apps.dashboard.board). Placeholders until Dev 3 confirms.
+# =============================================================================
+from importlib import import_module  # noqa: E402
+
+from django.core.exceptions import PermissionDenied, ValidationError  # noqa: E402
+
+HISTORY_MODEL = ("orders", "OrderStatusHistory")   # orders_orderstatushistory
+HISTORY_ORDER = "order"
+HISTORY_STATUS = "status"
+HISTORY_CREATED_AT = "created_at"
+ORDER_REFERENCE = "reference"
+ORDER_CUSTOMER = "customer"
+ORDER_CITY = "delivery_city"
+
+BOARD_STATUSES = ("PENDING", "CONFIRMED", "PREPARING", "READY_FOR_PICKUP", "OUT_FOR_DELIVERY")
+BOARD_LABELS = {"PENDING": "New", "CONFIRMED": "Confirmed", "PREPARING": "Preparing",
+                "READY_FOR_PICKUP": "Ready", "OUT_FOR_DELIVERY": "On the way"}
+# Kitchen steps staff may advance from the board. Later steps belong to riders (Dev 4).
+STAFF_NEXT_STATUS = {"PENDING": "CONFIRMED", "CONFIRMED": "PREPARING", "PREPARING": "READY_FOR_PICKUP"}
+STAFF_NEXT_LABEL = {"PENDING": "Confirm order", "CONFIRMED": "Start preparing", "PREPARING": "Mark ready"}
+LATE_AFTER_MINUTES = {"PENDING": 5, "CONFIRMED": 5, "PREPARING": 25, "READY_FOR_PICKUP": 10, "OUT_FOR_DELIVERY": 45}
+BOARD_POLL_SECONDS = 10
+
+ORDER_SERVICES_MODULE = "apps.orders.services"     # Dev 3: module and function names not confirmed
+
+
+class OrderServiceUnavailable(Exception):
+    pass
+
+
+def history_model():
+    return apps.get_model(*HISTORY_MODEL)
+
+
+def find_order(reference):
+    return order_model().objects.filter(**{ORDER_REFERENCE: reference}).first()
+
+
+def _order_services():
+    try:
+        return import_module(ORDER_SERVICES_MODULE)
+    except ImportError as exc:
+        raise OrderServiceUnavailable("The order service is not available yet.") from exc
+
+
+def update_order_status(*, order, new_status, actor, note=""):
+    fn = getattr(_order_services(), "update_order_status", None)
+    if fn is None:
+        raise OrderServiceUnavailable("The order service is not available yet.")
+    return fn(order=order, new_status=new_status, actor=actor, note=note)
+
+
+def order_transition_errors():
+    errors = [ValidationError, PermissionDenied]
+    try:
+        bad = getattr(_order_services(), "InvalidOrderTransition", None)
+    except OrderServiceUnavailable:
+        bad = None
+    if bad:
+        errors.append(bad)
+    return tuple(errors)
