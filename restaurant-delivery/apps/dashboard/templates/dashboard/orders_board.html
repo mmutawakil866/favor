@@ -12,7 +12,7 @@
 <body>
 <header class="bar">
   <h1>Live orders</h1>
-  <div class="meta"><a href="{% url 'dashboard:reports' %}">Reports</a><span id="today"></span><span id="conn" class="conn" role="status">Connecting</span></div>
+  <div class="meta"><a href="{% url 'dashboard:reports' %}">Reports</a><a href="{% url 'dashboard:reviews' %}">Reviews</a><span id="today"></span><span id="conn" class="conn" role="status">Connecting</span></div>
 </header>
 <main id="board" class="board" aria-live="polite"
       data-feed="{% url 'dashboard:orders-board-feed' %}"

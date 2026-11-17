@@ -161,3 +161,18 @@ def order_transition_errors():
     if bad:
         errors.append(bad)
     return tuple(errors)
+
+# --- Review moderation (apps.dashboard.review_*) ------------------------------
+def is_admin_user(user):
+    """PRD: only administrators hide reviews. Placeholder until Dev 1's role rules are final."""
+    if not is_dashboard_user(user):
+        return False
+    return bool(getattr(user, "is_superuser", False) or getattr(user, "role", None) == "ADMIN")
+
+
+def order_references(order_ids):
+    """{order pk: reference} for the given order ids."""
+    order_ids = list(order_ids)
+    if not order_ids:
+        return {}
+    return dict(order_model().objects.filter(pk__in=order_ids).values_list("pk", ORDER_REFERENCE))

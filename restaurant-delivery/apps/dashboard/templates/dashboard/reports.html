@@ -12,7 +12,7 @@
 <body>
 <header class="bar">
   <h1>Reports</h1>
-  <nav class="meta"><a href="{% url 'dashboard:orders-board' %}">Live orders</a></nav>
+  <nav class="meta"><a href="{% url 'dashboard:orders-board' %}">Live orders</a><a href="{% url 'dashboard:reviews' %}">Reviews</a></nav>
 </header>
 <main id="reports" data-feed="{% url 'dashboard:report-summary' %}">
   <form class="filters" id="filters" aria-label="Report filters">

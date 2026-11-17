@@ -1,0 +1,37 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reviews</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'dashboard/reports.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/reviews.css' %}">
+</head>
+<body>
+<header class="bar">
+  <h1>Reviews</h1>
+  <nav class="meta"><a href="{% url 'dashboard:orders-board' %}">Live orders</a><a href="{% url 'dashboard:reports' %}">Reports</a></nav>
+</header>
+<main id="reviews" data-feed="{% url 'dashboard:reviews-feed' %}"
+      data-hide="{% url 'dashboard:reviews-hide' pk=0 %}" data-restore="{% url 'dashboard:reviews-restore' pk=0 %}">
+  <form class="filters" id="filters" aria-label="Review filters" onsubmit="return false">
+    <label>Search comments <input type="search" id="q" maxlength="100" placeholder="e.g. cold, late"></label>
+    <label>From <input type="date" id="from"></label>
+    <label>To <input type="date" id="to"></label>
+    <div class="presets" id="vis" role="group" aria-label="Visibility"></div>
+    <div class="chips" id="chips" role="group" aria-label="Overall rating"></div>
+  </form>
+  <p id="note" class="note" role="status"></p>
+  <section id="summary" class="summary"></section>
+  <section id="list" class="list"></section>
+  <p><button type="button" id="more" hidden>Load more</button></p>
+</main>
+<div id="toast" class="toast" role="alert" hidden></div>
+{{ ratings|json_script:"ratings" }}
+{{ can_moderate|json_script:"can-moderate" }}
+<script src="{% static 'dashboard/reviews.js' %}" defer></script>
+</body>
+</html>

@@ -48,3 +48,4 @@ svg.chart{display:block;width:100%;height:auto}
 svg.chart text{fill:var(--muted);font:12px "Bricolage Grotesque",system-ui,sans-serif}
 svg.chart rect.b{transition:opacity var(--d1)}svg.chart rect.b:hover{opacity:.75}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.meta{display:flex;gap:16px}
